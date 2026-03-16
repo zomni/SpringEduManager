@@ -20,12 +20,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/",
-                                "/home",
                                 "/login",
-                                "/cursos",
-                                "/estudiantes",
-                                "/api/**",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**"
@@ -34,8 +29,15 @@ public class SecurityConfig {
                                 "/cursos/nuevo",
                                 "/cursos/guardar",
                                 "/estudiantes/nuevo",
-                                "/estudiantes/guardar"
+                                "/estudiantes/guardar",
+                                "/cursos/*/inscribir",
+                                "/cursos/*/inscribir/*",
+                                "/cursos/editar/*",
+                                "/estudiantes/editar/*",
+                                "/cursos/eliminar/*",
+                                "/estudiantes/eliminar/*"
                         ).hasRole("ADMIN")
+                        .requestMatchers("/acceso-denegado").authenticated()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -46,6 +48,9 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
+                )
+                .exceptionHandling(exception -> exception
+                        .accessDeniedPage("/acceso-denegado")
                 );
 
         return http.build();
