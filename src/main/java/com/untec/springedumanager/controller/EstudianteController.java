@@ -1,50 +1,79 @@
 package com.untec.springedumanager.controller;
 
 import com.untec.springedumanager.model.Estudiante;
-import com.untec.springedumanager.repository.CursoRepository;
 import com.untec.springedumanager.repository.EstudianteRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/estudiantes")
 public class EstudianteController {
 
-    // 🔹 ATRIBUTOS (van aquí, arriba de todo)
-    private final EstudianteRepository repo;
-    private final CursoRepository cursoRepo;
+    private final EstudianteRepository estudianteRepository;
 
-    // 🔹 CONSTRUCTOR (inyección de dependencias)
-    public EstudianteController(EstudianteRepository repo,
-                                CursoRepository cursoRepo) {
-        this.repo = repo;
-        this.cursoRepo = cursoRepo;
+    public EstudianteController(EstudianteRepository estudianteRepository) {
+        this.estudianteRepository = estudianteRepository;
     }
 
-    // 🔹 ENDPOINTS
-
     @GetMapping
-    public List<Estudiante> listar() {
-        return repo.findAll();
+    public List<Estudiante> listarEstudiantes() {
+        return estudianteRepository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Estudiante> obtenerPorId(@PathVariable Long id) {
+        Optional<Estudiante> estudiante = estudianteRepository.findById(id);
+
+        return estudiante.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Estudiante crear(@RequestBody Estudiante e) {
-        return repo.save(e);
+    public Estudiante crear(@RequestBody Estudiante estudiante) {
+        return estudianteRepository.save(estudiante);
     }
 
-    // 🔹 ENDPOINT PARA INSCRIBIR ESTUDIANTE EN CURSO
-    @PostMapping("/{estudianteId}/cursos/{cursoId}")
-    public Estudiante inscribirEnCurso(@PathVariable Long estudianteId,
-                                       @PathVariable Long cursoId) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Estudiante> actualizar(
+            @PathVariable Long id,
+            @RequestBody Estudiante estudianteActualizado
+    ) {
 
-        var estudiante = repo.findById(estudianteId).orElseThrow();
-        var curso = cursoRepo.findById(cursoId).orElseThrow();
+        Optional<Estudiante> estudianteOptional =
+                estudianteRepository.findById(id);
 
-        estudiante.getCursos().add(curso);
-        curso.getEstudiantes().add(estudiante);
+        if (estudianteOptional.isPresent()) {
 
-        return repo.save(estudiante);
+            Estudiante estudiante = estudianteOptional.get();
+
+            estudiante.setNombre(estudianteActualizado.getNombre());
+            estudiante.setEmail(estudianteActualizado.getEmail());
+
+            Estudiante guardado =
+                    estudianteRepository.save(estudiante);
+
+            return ResponseEntity.ok(guardado);
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+
+        Optional<Estudiante> estudianteOptional =
+                estudianteRepository.findById(id);
+
+        if (estudianteOptional.isPresent()) {
+
+            estudianteRepository.deleteById(id);
+
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.notFound().build();
     }
 }

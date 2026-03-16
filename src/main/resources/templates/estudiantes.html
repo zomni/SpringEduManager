@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Estudiantes</title>
+</head>
+<body>
+<h1>Listado de Estudiantes</h1>
+
+<a th:href="@{/estudiantes/nuevo}">Nuevo estudiante</a>
+<br><br>
+
+<a th:href="@{/}">Volver al inicio</a>
+
+<table border="1" cellpadding="8">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Email</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="estudiante : ${estudiantes}">
+        <td th:text="${estudiante.id}">1</td>
+        <td th:text="${estudiante.nombre}">Nombre</td>
+        <td th:text="${estudiante.email}">correo@ejemplo.com</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
