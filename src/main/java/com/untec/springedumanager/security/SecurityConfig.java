@@ -21,6 +21,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/login",
+                                "/api/**",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**"
@@ -28,14 +29,14 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/cursos/nuevo",
                                 "/cursos/guardar",
+                                "/cursos/editar/*",
+                                "/cursos/eliminar/*",
                                 "/estudiantes/nuevo",
                                 "/estudiantes/guardar",
-                                "/cursos/*/inscribir",
-                                "/cursos/*/inscribir/*",
-                                "/cursos/editar/*",
                                 "/estudiantes/editar/*",
-                                "/cursos/eliminar/*",
-                                "/estudiantes/eliminar/*"
+                                "/estudiantes/eliminar/*",
+                                "/cursos/*/inscribir",
+                                "/cursos/*/inscribir/*"
                         ).hasRole("ADMIN")
                         .requestMatchers("/acceso-denegado").authenticated()
                         .anyRequest().authenticated()
