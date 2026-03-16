@@ -1,94 +1,73 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
 <head>
-
-    <meta charset="UTF-8">
     <title>Cursos</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-
 </head>
 
-<body class="container mt-4">
+<body>
+<section layout:fragment="content">
 
-<h1>Cursos</h1>
+    <h1>Cursos</h1>
 
-<p class="alert alert-info">
-    Usuario conectado:
-    <strong th:text="${usuario}"></strong>
-</p>
+    <a class="btn btn-success mb-3"
+       th:href="@{/cursos/nuevo}">
+        Nuevo curso
+    </a>
 
-<a class="btn btn-success mb-3"
-   th:href="@{/cursos/nuevo}">
-    Nuevo curso
-</a>
+    <table class="table table-bordered">
+        <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Estudiantes</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
 
-<a class="btn btn-secondary mb-3"
-   th:href="@{/}">
-    Volver
-</a>
+        <tbody>
+        <tr th:each="curso : ${cursos}">
+            <td th:text="${curso.id}"></td>
+            <td th:text="${curso.nombre}"></td>
+            <td>
+                <span th:if="${#lists.isEmpty(curso.estudiantes)}">
+                    Sin estudiantes inscritos
+                </span>
 
-<table class="table table-bordered">
+                <ul th:if="${not #lists.isEmpty(curso.estudiantes)}" class="mb-0">
+                    <li th:each="e : ${curso.estudiantes}">
+                        <span th:text="${e.nombre}"></span>
+                        -
+                        <span th:text="${e.email}"></span>
+                    </li>
+                </ul>
+            </td>
+            <td>
+                <a class="btn btn-sm btn-warning"
+                   th:href="@{/cursos/editar/{id}(id=${curso.id})}">
+                    Editar
+                </a>
 
-    <thead class="table-dark">
-    <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Estudiantes</th>
-        <th>Acciones</th>
-    </tr>
-    </thead>
+                <a class="btn btn-sm btn-info"
+                   th:href="@{/cursos/{id}/inscribir(id=${curso.id})}">
+                    Inscribir
+                </a>
 
-    <tbody>
+                <form th:action="@{/cursos/eliminar/{id}(id=${curso.id})}"
+                      method="post"
+                      style="display:inline">
+                    <button class="btn btn-sm btn-danger" type="submit">
+                        Eliminar
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
-    <tr th:each="curso : ${cursos}">
-
-        <td th:text="${curso.id}"></td>
-
-        <td th:text="${curso.nombre}"></td>
-
-        <td>
-
-            <ul>
-                <li th:each="e : ${curso.estudiantes}">
-                    <span th:text="${e.nombre}"></span>
-                </li>
-            </ul>
-
-        </td>
-
-        <td>
-
-            <a class="btn btn-sm btn-warning"
-               th:href="@{/cursos/editar/{id}(id=${curso.id})}">
-                Editar
-            </a>
-
-            <a class="btn btn-sm btn-info"
-               th:href="@{/cursos/{id}/inscribir(id=${curso.id})}">
-                Inscribir
-            </a>
-
-            <form th:action="@{/cursos/eliminar/{id}(id=${curso.id})}"
-                  method="post"
-                  style="display:inline">
-
-                <button class="btn btn-sm btn-danger">
-                    Eliminar
-                </button>
-
-            </form>
-
-        </td>
-
-    </tr>
-
-    </tbody>
-
-</table>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+</section>
 </body>
 </html>
